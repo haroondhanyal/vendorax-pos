@@ -1,0 +1,16 @@
+# Dependencies and generated output
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Environment files: commit the .example files only
+.env
+.env.*
+!.env.example
+
+# Logs and OS/editor files
+*.log
+.DS_Store
+.vscode/
+.idea/
