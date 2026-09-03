@@ -13,9 +13,10 @@ export class ProductsService {
   }
 
   async create(data: any) {
-    const category = data.categoryId ? null : await this.prisma.category.upsert({ where: { slug: this.slug(data.category ?? 'General') }, update: {}, create: { name: data.category ?? 'General', slug: this.slug(data.category ?? 'General') } });
+    const { category: categoryName, ...productData } = data;
+    const category = data.categoryId ? null : await this.prisma.category.upsert({ where: { slug: this.slug(categoryName ?? 'General') }, update: {}, create: { name: categoryName ?? 'General', slug: this.slug(categoryName ?? 'General') } });
     const unit = data.unitId ? null : await this.prisma.unit.upsert({ where: { slug: 'piece' }, update: {}, create: { name: 'Piece', slug: 'piece' } });
-    const product = await this.prisma.product.create({ data: { ...data, categoryId: data.categoryId ?? category!.id, unitId: data.unitId ?? unit!.id, sku: data.sku ?? `NT-${Date.now().toString().slice(-8)}`, purchasePrice: Number(data.purchasePrice ?? data.retailPrice), retailPrice: Number(data.retailPrice), wholesalePrice: Number(data.wholesalePrice ?? data.retailPrice), tax: Number(data.tax ?? 0), minimumStock: Number(data.minimumStock ?? 10), openingStock: Number(data.openingStock ?? 0) } });
+    const product = await this.prisma.product.create({ data: { ...productData, categoryId: data.categoryId ?? category!.id, unitId: data.unitId ?? unit!.id, sku: data.sku ?? `VX-${Date.now().toString().slice(-8)}`, purchasePrice: Number(data.purchasePrice ?? data.retailPrice), retailPrice: Number(data.retailPrice), wholesalePrice: Number(data.wholesalePrice ?? data.retailPrice), tax: Number(data.tax ?? 0), minimumStock: Number(data.minimumStock ?? 10), openingStock: Number(data.openingStock ?? 0) } });
     await this.prisma.stock.create({ data: { productId: product.id, quantity: product.openingStock, previousQuantity: 0 } });
     return product;
   }
