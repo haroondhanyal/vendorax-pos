@@ -11,6 +11,9 @@ VendoraX is a Vue 3 and NestJS point-of-sale platform for stores, cafés, boutiq
 - Cart item removal and customer selection/creation directly at checkout
 - Cashier login at checkout; each completed sale is assigned to the salesperson and counted in Team
 - Detailed receipt with invoice reference, product line items, tax/discount, payment method, and print action
+- Per-product fixed or percentage discount tags, with discounted prices applied at checkout
+- Payment options: cash, Visa/Mastercard, bank account, EasyPaisa, JazzCash, and credit with payment reference
+- Built-in persistent starter products, inventory, customers, and cashier account for the local SQLite database
 - Prisma/SQLite schema for users, products, inventory, purchases, suppliers, sales, customers, and expenses
 - Product API: list/search, create, update, deactivate
 - Inventory API: stock listing, transaction-safe adjustments, stock-movement audit trail
@@ -37,6 +40,7 @@ cd backend
 cp .env.example .env
 npm install
 npm run db:setup
+npm run db:seed
 npm run start:dev
 ```
 
@@ -54,6 +58,8 @@ npm run dev
 ## Cashier accounts
 
 Create a cashier from **Team → Add member**. At checkout they sign in with that email and password; the sale is then saved against them and their sales count updates in Team. Product images are stored locally in SQLite for the local application.
+
+The included demo cashier is `cashier@vendorax.local` with password `VendoraX123`. The receipt's **Print / Save as PDF** action opens the browser print dialog; choose **Save as PDF** to download the bill as a PDF.
 
 ## Core API
 

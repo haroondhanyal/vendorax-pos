@@ -115,6 +115,8 @@ model Product {
   openingStock    Int      @default(0)
   expiryDate      DateTime?
   imageUrl        String?
+  discountType    String?  // PERCENT or FIXED
+  discountValue   Decimal  @default(0)
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -223,6 +225,7 @@ model Sale {
   tax         Decimal  @default(0)
   discount    Decimal  @default(0)
   paymentMode String   // CASH, CARD, CHEQUE, CREDIT
+  paymentReference String?
   notes       String?
   createdAt   DateTime @default(now())
 
@@ -240,6 +243,7 @@ model SaleItem {
   quantity Int
   unitPrice Decimal
   total   Decimal
+  discount Decimal @default(0)
 
   sale    Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])
