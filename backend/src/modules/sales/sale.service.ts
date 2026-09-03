@@ -6,12 +6,16 @@ export class SalesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll() {
-    return this.prisma.sale.findMany({ include: { customer: true, items: { include: { product: true } } }, orderBy: { createdAt: 'desc' } });
+    return this.prisma.sale.findMany({ include: { customer: true, user: { select: { firstName: true, lastName: true, email: true } }, items: { include: { product: true } } }, orderBy: { createdAt: 'desc' } });
   }
 
-  async create(data: { customerId?: string; paymentMode: string; paidAmount?: number; discount?: number; notes?: string; items: Array<{ productId: string; quantity: number; unitPrice?: number }> }) {
+  async create(data: { customerId?: string; userId?: string; paymentMode: string; paidAmount?: number; discount?: number; notes?: string; items: Array<{ productId: string; quantity: number; unitPrice?: number }> }) {
     if (!data.items?.length) throw new BadRequestException('At least one item is required');
     return this.prisma.$transaction(async (tx) => {
+      if (data.userId) {
+        const user = await tx.user.findFirst({ where: { id: data.userId, isActive: true, deletedAt: null } });
+        if (!user) throw new BadRequestException('Salesperson is not available');
+      }
       let subtotal = 0;
       const items = [] as Array<{ productId: string; quantity: number; unitPrice: number; total: number }>;
       for (const line of data.items) {
@@ -29,7 +33,7 @@ export class SalesService {
       const discount = Number(data.discount ?? 0);
       const totalAmount = subtotal + tax - discount;
       const invoiceNo = `VX-${Date.now().toString().slice(-8)}`;
-      const sale = await tx.sale.create({ data: { invoiceNo, customerId: data.customerId, totalAmount, paidAmount: Number(data.paidAmount ?? totalAmount), tax, discount, paymentMode: data.paymentMode, notes: data.notes, items: { create: items } }, include: { items: true } });
+      const sale = await tx.sale.create({ data: { invoiceNo, customerId: data.customerId, userId: data.userId, totalAmount, paidAmount: Number(data.paidAmount ?? totalAmount), tax, discount, paymentMode: data.paymentMode, notes: data.notes, items: { create: items } }, include: { items: true } });
       for (const line of items) {
         const current = await tx.stock.findUniqueOrThrow({ where: { productId: line.productId } });
         await tx.stockMovement.create({ data: { productId: line.productId, movementType: 'OUT', quantity: -line.quantity, previousStock: current.quantity + line.quantity, newStock: current.quantity, referenceId: sale.id, referenceType: 'SALE' } });

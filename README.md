@@ -6,8 +6,11 @@ VendoraX is a Vue 3 and NestJS point-of-sale platform for stores, cafés, boutiq
 
 - Responsive Vue dashboard and interactive checkout workspace
 - Product search/categories, low/out-of-stock states, cart quantities, discount, tax, payments, and checkout UI
-- New Product dialog: API mode creates product + opening stock; offline demo mode keeps a local catalog entry
-- Receipt dialog with invoice reference, paid amount, payment method, and print action
+- New Product dialog: API mode creates product + opening stock, product image, and optional expiry date
+- Expiry status appears in catalog and live inventory, including expired and 30-day warning states
+- Cart item removal and customer selection/creation directly at checkout
+- Cashier login at checkout; each completed sale is assigned to the salesperson and counted in Team
+- Detailed receipt with invoice reference, product line items, tax/discount, payment method, and print action
 - Prisma/SQLite schema for users, products, inventory, purchases, suppliers, sales, customers, and expenses
 - Product API: list/search, create, update, deactivate
 - Inventory API: stock listing, transaction-safe adjustments, stock-movement audit trail
@@ -47,6 +50,10 @@ npm run dev
 
 - Frontend: `http://localhost:5173`
 - API: `http://localhost:3000/api`
+
+## Cashier accounts
+
+Create a cashier from **Team → Add member**. At checkout they sign in with that email and password; the sale is then saved against them and their sales count updates in Team. Product images are stored locally in SQLite for the local application.
 
 ## Core API
 

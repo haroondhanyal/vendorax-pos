@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service.js';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -9,13 +10,13 @@ export class UsersService {
     return this.prisma.user.findMany({
       where: { deletedAt: null },
       orderBy: { createdAt: 'desc' },
-      select: { id: true, firstName: true, lastName: true, email: true, username: true, role: true, isActive: true, createdAt: true },
+      select: { id: true, firstName: true, lastName: true, email: true, username: true, role: true, isActive: true, createdAt: true, _count: { select: { sales: true } } },
     });
   }
 
-  async create(data: { firstName: string; lastName?: string; email: string; role?: string }) {
+  async create(data: { firstName: string; lastName?: string; email: string; password: string; role?: string }) {
     const email = data.email?.trim().toLowerCase();
-    if (!data.firstName?.trim() || !email) throw new BadRequestException('Name and email are required');
+    if (!data.firstName?.trim() || !email || !data.password) throw new BadRequestException('Name, email and password are required');
     const username = email.split('@')[0].replace(/[^a-z0-9_]/g, '') || `user${Date.now()}`;
     return this.prisma.user.create({
       data: {
@@ -23,10 +24,10 @@ export class UsersService {
         lastName: data.lastName?.trim() || null,
         email,
         username: `${username}${Date.now().toString().slice(-4)}`,
-        password: 'local-user-password-change-me',
+        password: await bcrypt.hash(data.password, 10),
         role: this.role(data.role),
       },
-      select: { id: true, firstName: true, lastName: true, email: true, username: true, role: true, isActive: true, createdAt: true },
+      select: { id: true, firstName: true, lastName: true, email: true, username: true, role: true, isActive: true, createdAt: true, _count: { select: { sales: true } } },
     });
   }
 

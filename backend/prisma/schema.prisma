@@ -34,6 +34,8 @@ model User {
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
 
+  sales     Sale[]
+
   @@map("users")
 }
 
@@ -215,6 +217,7 @@ model Sale {
   id          String   @id @default(cuid())
   invoiceNo   String   @unique
   customerId  String?
+  userId      String?
   totalAmount Decimal
   paidAmount  Decimal
   tax         Decimal  @default(0)
@@ -224,6 +227,7 @@ model Sale {
   createdAt   DateTime @default(now())
 
   customer    Customer? @relation(fields: [customerId], references: [id])
+  user        User?     @relation(fields: [userId], references: [id])
   items       SaleItem[]
 
   @@map("sales")
