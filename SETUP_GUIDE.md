@@ -100,15 +100,8 @@ pos-system/
 ### 1. Configure Database
 
 ```bash
-# Install PostgreSQL if not already installed
-# macOS: brew install postgresql
-# Start PostgreSQL service
-brew services start postgresql
-
-# Create database
-createdb pos_system
-
-# Or use PgAdmin UI for easier management
+# No database server is required locally.
+# VendoraX uses SQLite and stores data in backend/prisma/dev.db.
 ```
 
 ### 2. Backend Setup
@@ -119,17 +112,11 @@ cd backend
 # Copy environment file
 cp .env.example .env
 
-# Update .env with your database URL
-# DATABASE_URL="postgresql://postgres:your_password@localhost:5432/pos_system"
-
 # Install dependencies (already done)
 npm install
 
-# Run Prisma migrations
-npx prisma migrate dev --name init
-
-# Seed database (optional)
-npm run seed  # Will create sample data
+# Create/update the persistent local SQLite database
+npm run db:setup
 
 # Start development server
 npm run start:dev
@@ -259,7 +246,7 @@ Update these files with your configuration:
 
 **backend/.env:**
 ```
-DATABASE_URL=postgresql://user:password@localhost:5432/pos_system
+DATABASE_URL=file:./dev.db
 JWT_SECRET=your_super_secret_key
 JWT_EXPIRY=24h
 NODE_ENV=development

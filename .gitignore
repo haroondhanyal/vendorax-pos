@@ -3,6 +3,8 @@ node_modules/
 dist/
 coverage/
 *.tsbuildinfo
+**/prisma/*.db
+**/prisma/*.db-journal
 
 # Environment files: commit the .example files only
 .env

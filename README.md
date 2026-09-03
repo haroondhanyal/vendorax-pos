@@ -8,7 +8,7 @@ VendoraX is a Vue 3 and NestJS point-of-sale platform for stores, cafés, boutiq
 - Product search/categories, low/out-of-stock states, cart quantities, discount, tax, payments, and checkout UI
 - New Product dialog: API mode creates product + opening stock; offline demo mode keeps a local catalog entry
 - Receipt dialog with invoice reference, paid amount, payment method, and print action
-- Prisma/PostgreSQL schema for users, products, inventory, purchases, suppliers, sales, customers, and expenses
+- Prisma/SQLite schema for users, products, inventory, purchases, suppliers, sales, customers, and expenses
 - Product API: list/search, create, update, deactivate
 - Inventory API: stock listing, transaction-safe adjustments, stock-movement audit trail
 - Sales API: transactional invoice creation, tax/discount, sale items, automatic stock deduction, and receipt payload
@@ -22,7 +22,7 @@ Full authentication/RBAC enforcement, master-data CRUD, customers, suppliers, pu
 ## Requirements
 
 - Node `24.6.0`: run `nvm use` inside `pos-system`
-- PostgreSQL 12+ with a `pos_system` database
+- No database server is needed for local development: SQLite stores persistent data in `backend/prisma/dev.db`
 
 ## Run
 
@@ -33,8 +33,7 @@ nvm use
 cd backend
 cp .env.example .env
 npm install
-npx prisma generate
-npx prisma db push
+npm run db:setup
 npm run start:dev
 ```
 
