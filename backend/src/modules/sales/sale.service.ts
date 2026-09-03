@@ -28,7 +28,7 @@ export class SalesService {
       const tax = items.reduce((sum, item) => sum + item.total * 0.08, 0);
       const discount = Number(data.discount ?? 0);
       const totalAmount = subtotal + tax - discount;
-      const invoiceNo = `NT-${Date.now().toString().slice(-8)}`;
+      const invoiceNo = `VX-${Date.now().toString().slice(-8)}`;
       const sale = await tx.sale.create({ data: { invoiceNo, customerId: data.customerId, totalAmount, paidAmount: Number(data.paidAmount ?? totalAmount), tax, discount, paymentMode: data.paymentMode, notes: data.notes, items: { create: items } }, include: { items: true } });
       for (const line of items) {
         const current = await tx.stock.findUniqueOrThrow({ where: { productId: line.productId } });
